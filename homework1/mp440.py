@@ -1,5 +1,4 @@
 
-
 '''
 GCD algorithm
 '''
@@ -37,15 +36,17 @@ def guess_limited(n, is_this_smaller):
     
     if n == 1:
         return 1
-    
-    step = n//30
-    
+   
+    #Define step sizes for different input n 
     if n <= 1000000:
         step = 1500
         
     if n <= 500000:
-        step = 
-        
+        step = 1000
+    
+    if n <= 10000:
+        step = 100
+    
     if n <= 1000:
         step = n//30
         
@@ -88,8 +89,7 @@ def guess_limited_plus(n, is_this_smaller):
     answer = recursiveBuddyFriendPal(mini, maxi, is_this_smaller)
     return answer
 
-def recursiveBuddyFriendPal(mini, maxi, is_this_smaller):
-    
+def recursiveBuddyFriendPal(mini, maxi, is_this_smaller): 
     #print "Range of " + str(mini) + " - " + str(maxi)
     
     if maxi == mini:
