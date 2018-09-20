@@ -1,0 +1,205 @@
+\documentclass[a4paper,12pt]{article}
+
+%Packages for logic and math statements
+\usepackage{amsmath}
+\usepackage{semantic}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+%Packages for drawing graphs
+\usepackage {tikz}
+\usetikzlibrary {positioning}
+\definecolor {processblue}{cmyk}{0.96,0,0,0}
+
+%Move the title up to the top of the page
+\usepackage[T1]{fontenc}
+\usepackage{titling}
+\setlength{\droptitle}{-10em}   
+
+\begin{document}
+
+
+\title{CS440: Intro to Artificial Intelligence \\
+	\large Homework 1}
+\author{\textbf{Submitted by:} \\David Schwab (dbs127) \\ Jonathan Friedman (jif24)}
+\maketitle
+
+\begin{enumerate}
+% Question 1
+\item 
+Let the domain of $x$ be \{-5, -3, -1, 1, 3\}. Express using negations, disjunctions, and conjunctions, but without quantifiers, the proposition {$\exists$xP(x)}. \\ 
+	
+	\textbf{Answer:}\\ 
+		$$P(-5) \lor P(-3) \lor P(-1) \lor P(1) \lor P(3)$$
+
+
+% Question 2
+\item 
+Negate the statements below so that negation symbols immediately precedes predicates: 
+$$ {\exists x} {\forall y(P(x, y)} \Rightarrow Q(x, y))) \Rightarrow {\forall x} {\forall y} {\exists z}(P(x, y) \Rightarrow P(y, z)).$$
+	
+	\textbf{Answer:}  
+		$$ {\forall x}{\exists y}(P(x,y) \land \neg Q(x,y)) \land \neg ({\exists x}{\exists y}{\forall z}P(x,y) \land \neg P(y,z)) $$
+	
+% Question 3
+\item 
+Following the greatest common divisor algorithm, find $gcd(123, 46)$. Show your work.
+
+	\textbf{Answer:} \\ 
+		a) Neither $123$ or $46$ equal $0$, so to solve $gcd(123, 46)$ we must compute the following steps: \\
+			$$ 123 mod 46 = 31 $$
+		b) $gcd(46, 31): $
+				$$ 46  mod  31 = 15 $$
+		c)  $ gcd(31, 15): $			
+				$$ 31 mod 15 = 1 $$
+			Therefore, $gcd(123, 46) = 1$
+
+%Question 4
+\item 
+Prove via induction that for an undirected simple graph with n vertices, there can be at most $|E| = \frac{n(n-1) }{2}$
+	
+	\textbf{Answer:}\\ 
+		\textbf{\textit{Base Case:}} This holds true for an undirected graph with $n=0$ vertices, where we have $\frac{1(1-1)}{2} = 0$ edges. \\
+		\textbf{\textit{Inductive Step:}} Assume this holds true for a graph with up to $n$ vertices, which would have a maximum of $\frac{(n)(n-1)}{2} = \frac{n^2-n}{n}$ edges. 
+					When we add the $(n+1)^{th}$ vertex, we need to connect it to our previous $n$ vertices, requiring an additional  $n$ edges. This gives us:
+					$$\frac{(n)(n-1)}{2} + n $$
+					$$= \frac{(n+1)(n+1-1)}{2}$$ 
+				This concludes our inductive step, proving our inductive hypothesis.
+
+%Question 5
+\item
+Recall that the 8-puzzle problem has eight movable pieces and one empty swap space on a $3 \times 3$ game board. What is the size of the state space if $3$ of the pieces are labeled and $5$ are unlabeled? That is, the game pieces can be thought of as being labeled $1, 2, 3,\ast,\ast,\ast,\ast, \ast $. You only need to provide the formula; there is no need to compute the final number. 
+
+	\subitem \textbf{Answer:}\\
+	Since we have four distinct tiles: the $3$ labelled tiles and the one empty tile, we end up with a final formula of:
+	$$ \frac{9!}{5!} $$
+	
+%Question 6
+\item
+List all \textbf{complete graphs} and \textbf{complete bipartite graphs} that are planar. For each graph you list, provide a drawing showing that it is planar
+
+	\textbf{Answer:}\\
+		% Graph with one node:
+		\subitem{•} \textit{k = 1}
+		\begin{center}
+		\begin{tikzpicture}
+  			[scale=.8,auto=left,every node/.style={circle,fill=blue!20}]
+  			\node[draw] at (0, 6) (A)  {$0$};
+  		\end{tikzpicture}
+		\end{center}
+
+		% Graph with two nodes:
+		\subitem{•} \textit{k = 2}
+		\begin{center}
+		\begin{tikzpicture}
+	  		[scale=.8,auto=left,every node/.style={circle,fill=blue!20}]
+	  		\node[draw] at (0, 6) (A)  {$0$};
+			\node[draw] at (2, 6) (B)  {$1$};
+	
+			\foreach \from/\to in {A/B}
+				\draw(\from) -- (\to);
+	  		\end{tikzpicture}
+		\end{center}
+
+	% Graph with three nodes:
+		\subitem{•} \textit{k = 3}
+		\begin{center}
+		\begin{tikzpicture}
+  			[scale=.8,auto=left,every node/.style={circle,fill=blue!20}]
+  			\node[draw] at (1, 7) (C)  {$0$};	
+			\node[draw] at (0, 6) (A)  {$1$};
+			\node[draw] at (2, 6) (B)  {$2$};
+			
+			\foreach \from/\to in {A/B/, A/C, B/C}
+				\draw(\from) -- (\to);
+  			\end{tikzpicture}
+		\end{center}
+	
+		% Graph with four nodes:
+		\subitem{•} \textit{k = 3}
+		\begin{center}
+		\begin{tikzpicture}
+	  		[scale=.8,auto=left,every node/.style={circle,fill=blue!20}]
+	  		\node[draw] at (2, 8) (C)  {$0$};	
+			\node[draw] at (0, 5) (A)  {$1$};
+			\node[draw] at (4, 5) (B)  {$2$};	
+			\node[draw] at (2, 6.2) (D)  {$3$};
+	
+			\foreach \from/\to in {A/B/, A/C, A/D, B/C, B/D, C/D}
+				\draw(\from) -- (\to);
+	  		\end{tikzpicture}
+		\end{center}
+
+		% Complete planar bipartite K(1,n) graphs (Star graphs)
+		\subitem{•} \textit{$K_{1,n}$ $\rightarrow$ As this is a star graph, it will always be planar if it is complete, eg;}
+		\begin{center}
+		\begin{tikzpicture}
+	  		[scale=.8,auto=left,every node/.style={circle,fill=blue!20}]
+	  		\node[draw] at (2, 8) (C)  {$1$};	
+			\node[draw] at (0, 5) (A)  {$1$};
+			\node[draw] at (4, 5) (B)  {$1$};	
+			\node[draw] at (4, 7) (B2)  {$1$};	
+			\node[draw] at (0, 7) (B3)  {$1$};	
+			\node[draw] at (2, 4) (C2)  {$1$};
+			\node[draw] at (2, 6) (D)  {$0$};
+	
+			\foreach \from/\to in {D/A, D/B, D/C, D/B2, D/B3, D/C2}
+				\draw(\from) -- (\to);
+	  		\end{tikzpicture}
+		\end{center}
+		
+		% Complete planar bipartite K(2,n) graphs (Not reall star graphs)
+		\subitem{•} \textit{$K_{2,n}$ $\rightarrow$ Additionally, all complete bipartite $K_{2,n}$ graphs are always planar, since you can arrange the nodes of group $0$ on either sides of group $1$ nodes, eg;}
+		\begin{center}
+		\begin{tikzpicture}
+	  		[scale=.8,auto=left,every node/.style={circle,fill=blue!20}]
+	  		\node[draw] at (2, 1) (A)  {$1$};	
+			\node[draw] at (2, 2) (B)  {$1$};
+			\node[draw] at (2, 3) (C)  {$1$};	
+			\node[draw] at (2, 4) (D)  {$1$};	
+			\node[draw] at (2, 5) (E)  {$1$};	
+			\node[draw] at (2, 6) (F)  {$1$};
+			\node[draw] at (0, 3) (G)  {$0$};
+			\node[draw] at (4, 3) (H)  {$0$};
+	
+			\foreach \from/\to in {G/A, G/B, G/C, G/D, G/E, G/F, H/A, H/B, H/C, H/D, H/E, H/F}
+				\draw(\from) -- (\to);
+	  		\end{tikzpicture}
+		\end{center}
+
+
+% Question 7
+\item
+Give the smallest complete graph that is non-planar. Prove your claim. \textit{[Hint: argue that edge crossings cannot be avoided somehow.]}
+
+	\subsubitem{\textbf{Answer:}}
+	The smallest complete graph that is non-planar is $K_5$. We can show this using Euler's formula:
+		$$ |V| - |E| + |F| = 2 $$
+	Where $|V|$  and $|E|$ are the number of vertices and edges in some graph $G = (V, E)$, and $|F|$ is the set of faces on that graph. From this theorem we can derive the lemma that If $G = (V, E)$ is a			         connected planar graph and $|V | > 2$, then $|E| \leq 3|V| - 6$. \\	
+	
+	From this lemma we can see that $K_5$ is not planar, as $10 \nleq  3 \times 5 - 6$. In other words, with $5$ vertices and $10$ edges, there is no way of connecting all the vertices without a crossing. 
+
+
+%Question 8
+\item
+Consider a bar consisting of $n$ numbered squares. You are to break the bar into smaller ones, each of which must contain one or more complete numbered squares. 
+\subitem{(1)} How many different bars can be obtained, including the original bar? 
+	
+	\textbf{Answer:} \\
+	Assuming you can't recombine separate pieces to form new bars (ie; you can't form a new bar out of square $1$ and square $3$), there are \[\sum_{k = 1}^{n}k\] ways of dividing up the bar. This makes sense as there will be $1$ bar with $n$ pieces, $2$ bars with $n - 1$ pieces, $3$ bars with $n - 2$ pieces $...$ and $n$ bars with $1$ piece. 
+	
+\subitem{(2)} How many possible ways are there for doing the division? Extending the bar to be an $n \times m$ bar formed by $nm$ uniquely numbered squares. \\
+	\textbf{Answer:} \\
+	There are: \[\sum_{k = 1}^{n}2(k - 1)\] ways of doing the division as there are a total of $n - 1$ slots to cut from. For example, a bar with $n = 4$ will have 6 possible ways it can be divided into single sized pieces (note: this answer assumes that getting a square from the middle of the larger bar will require two divisions). 
+	
+\subitem{(3)} We are to obtain smaller rectangular bars consisting of adjacent squares.  How many different bars can be obtained, including the original bar? \textit{[Hint: for the first
+question, think about one different bar at a time and how a unique bar may be obtained.]} \\
+	
+	\textbf{Answer:} \\
+	A $1 \times 1$ bar will have one possible rectangle that can be formed of it. \\
+	A $2 \times 1$ bar will have three possible rectangles that can be formed of it. \\
+	A $3 \times 1$ bar will have six possible rectangles that can be formed of it. \\ \\
+	We can thus see that every individual column of the bar will have $\frac{n(n+1)}{2}$ possible bars that can be formed of it.
+	We can generalize this to bar of size $m \times n$ we can determine the number of different possible bars using the following formula: \[bars = \frac{m(m+1)n(n+1)}{4} \] 
+
+\end{enumerate}
+\end{document}
