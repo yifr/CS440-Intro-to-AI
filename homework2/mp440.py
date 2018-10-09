@@ -1,97 +1,109 @@
 import random
+import heapq as hq
 
 ''' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ '''
 '''
                 For Search Algorithms 
 '''
 ''' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ '''
+bfs_q = [] #Queue for BFS (append/pop(0))
+dfs_stack = [] #Stack for DFS (insert(0)/pop(0))
+astar_q = [] #Priority Queue
+uc_q = []   #Priority Queue
 
 '''
 BFS add to queue 
 '''
 def add_to_queue_BFS(node_id, parent_node_id, cost, initialize=False):
-    # Your code here
-     return
+    bfs_q.append((node_id, parent_node_id)) 
+    return
 
 '''
 BFS add to queue 
 '''
 def is_queue_empty_BFS():
-    # Your code here
-    return False
+    if bfs_q:
+        return False
+    else:
+        return True
 
 '''
 BFS pop from queue
 '''
 def pop_front_BFS():
-    (node_id, parent_node_id) = (0, 0)
-    # Your code here
+    (node_id, parent_node_id) = bfs_q.pop(0)
     return (node_id, parent_node_id)
 
 '''
 DFS add to queue 
 '''
 def add_to_queue_DFS(node_id, parent_node_id, cost, initialize=False):
-    # Your code here
-    return
+    dfs_stack.append((node_id,parent_node_id))
+    return 
 
 '''
 DFS add to queue 
 '''
 def is_queue_empty_DFS():
-    # Your code here
-    return False
+    if dfs_stack:
+        return False
+    else:
+        return True
 
 '''
 DFS pop from queue
 '''
 def pop_front_DFS():
-    (node_id, parent_node_id) = (0, 0)
-    # Your code here
+    (node_id, parent_node_id) = dfs_stack.pop()
     return (node_id, parent_node_id)
 
 '''
 UC add to queue 
 '''
 def add_to_queue_UC(node_id, parent_node_id, cost, initialize=False):
-    # Your code here
-    return
+    node = (cost, (node_id,parent_node_id))
+    hq.heappush(uc_q,node)
+    return 
 
 '''
 UC add to queue 
 '''
 def is_queue_empty_UC():
-    # Your code here
-    return False
+    if uc_q:
+        return False
+    else:
+        return True
 
 '''
 UC pop from queue
 '''
 def pop_front_UC():
     (node_id, parent_node_id) = (0, 0)
-    # Your code here
+    (node_id, parent_node_id) = hq.heappop(uc_q)[1]
     return (node_id, parent_node_id)
 
 '''
 A* add to queue 
 '''
 def add_to_queue_ASTAR(node_id, parent_node_id, cost, initialize=False):
-    # Your code here
-    return
-
+    node = (cost, (node_id,parent_node_id))
+    hq.heappush(astar_q,node)
+    return 
 '''
 A* add to queue 
 '''
 def is_queue_empty_ASTAR():
-    # Your code here
-    return False
+    if astar_q:
+        return False
+    else:
+        return True
 
 '''
 A* pop from queue
 '''
 def pop_front_ASTAR():
     (node_id, parent_node_id) = (0, 0)
-    # Your code here
+    (node_id, parent_node_id) = hq.heappop(astar_q)[1]
     return (node_id, parent_node_id)
 
 ''' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ '''
