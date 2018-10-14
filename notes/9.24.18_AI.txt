@@ -1,0 +1,112 @@
+9/24/19
+
+Intro to AI:
+
+I. Variants on Hill Climbing Algorithms:
+
+    1) Stochastic Hill Climbing:
+        a. Randomly pick best move
+        b. Slower to converge
+
+    2) First Choice Hill climbing
+        a. Randomly generate successor states and pick the best
+        b. Applies to scenarios with high dimensionality (ie; lots of successor states) 
+
+II. Simulated Annealing
+    - Annealing is a way of cooling hot metal slowly to achieve desired properties
+    - Simulated annealing is similar to hill climbing but it allows "bad moves" with small probability
+
+SA Pseudocode:
+
+Function simulated-annealing(problem, schedule) returns a solution state
+    inputs: problem, a problem
+            schedule, a mapping from time to "temperature"
+
+    current <- make_node(problem.initial_state):
+        for t = 1 to infinity:
+            T = schedule(T)
+            if T = 0 return current
+            next - randomly selected successor of current 
+            delta_E = next.value - current.value
+            "
+            "See notes for rest
+            "
+
+     - Intuitively, SA "shakes" the current state
+            - the higher the temperature T, the more "vibration"
+            - can handle very difficult case with many local optima
+            - Used widely in in applications like: VLSI, factory scheduling, structural optimization
+
+
+III. Local Beam Search
+    a. similar to k hill-climbing together
+    b. difference is the k states are pooled together
+    c. States w/ good successors dominate search process
+   
+
+IV. Genetic Algorithms
+    A. Very effective
+        1. Similar to local beam search
+            a. start with population of individuals,
+            b. you apply a fitness function, and use crossover and mutation to reach a high level of satisfaction 
+
+
+    B. ie; 8-Queens
+        1. individual = state, 8 x log(2)8 = 24 bits
+        2. fitness = number of pairs of queens not attacking (higher = better)
+        3. crossover = slice pairs in the middle and mix them together (ie; 32752411 + 24748552 --> 32748552 + 24752411)
+        4. In mutation you randomly flip some bits to change up numbers 
+
+
+V. Non-Deterministic Actions:
+    1. note that NDAs are not associated with probabilities, they are possibilities
+
+VI. Observing States
+    A. General:
+        1. In the real world the state is not given - it must be observed
+        2. In the worst case there may be no observation at all
+        3. Limited powers in this case: not always a problem
+
+    B. Partial observation and the belief state
+        1. Generally sensing is added through a function Percept(•)
+            a. for full information, Percept(s) = s 
+            b. For no observation, Percept(s) = null
+        
+        2. With partial observation, states become belief states    
+            a. e.g; applying deterministic and non-determinisitc right action lo the same belief state
+
+    C. Searching with observations
+        1. To handle observation we need an extra processing step
+        2. Observation processing is generally done after applying an action
+
+==========================================================================================
+
+
+CONSTRAINT SATISFACTION PROBLEMS:
+
+
+Definition: 
+- A set of variables: X = {x1, ... , xn}
+- A set of domains for the variables: D = {D1, ... , Dn}
+- A set of constraints over the variables: C = {c1...cn}
+- State: an assignment of values to a subset of X
+- A consistent assignment is a state that satisfies all constraints
+- A complete assignment: an assignmnent of values to all of X
+-> Solution: a consistent and complete assignment
+
+Eg; Cryptarithmetic:
+
+  t w o
++ t w o
+---------
+F O U R
+
+variables: xr, xw, xo, xf, xu, xr, c1, c2
+domains: xi in {0,...9}, cj in {0,1}
+constraints:
+
+xo + xo = xr + 10c1
+xw + xw = xu+10c2
+xt + xt + c2 ...
+    
+
