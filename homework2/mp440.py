@@ -1,6 +1,7 @@
 import random
 import heapq as hq
 
+
 ''' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ '''
 '''
                 For Search Algorithms 
@@ -106,6 +107,7 @@ def pop_front_ASTAR():
     (node_id, parent_node_id) = hq.heappop(astar_q)[1]
     return (node_id, parent_node_id)
 
+
 ''' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ '''
 '''
                 For n-queens problem 
@@ -118,16 +120,80 @@ Compute a random state
 '''
 def get_random_state(n):
     state = []
-    # Your code here 
+    rand = []
+    c = 0
+    while c < n:
+        rand.append(random.randint(0,n-1))
+        c = c+1
+        
+    #PrintChessboard
+    state = []
+    for x in range(n):
+        newchessrow = []
+        for y in range (n):
+            newchessrow.append("[]")
+        state.append(newchessrow)
+    
+    for x in range( len(state)):
+        state[rand[x]][x] = "Q"
+    
+    for x in state:
+        print x
+        print " "
+    
     return state
+
+
+def queens_attacking(state, x, y):
+        pairs = 0
+        #Horizontal:
+        for i in range(x + 1, len(state)):
+            if state[i][y] == 'Q':
+                pairs += 1 
+        
+        #Vertical:
+        for j in range(y+1, len(state)):
+                if state[x][j] == 'Q':
+                        pairs += 1
+
+
+        #Diagonal right
+        i = x + 1
+        j = y + 1
+        while i < len(state) and j < len(state):
+                if state[i][j] == 'Q':
+                        pairs += 1
+
+                i += 1
+                j += 1
+
+        #Diagonal left
+        i = x - 1
+        j = y - 1
+        while i >= 0 and j >= 0:
+                if state[i][j] == 'Q':
+                        pairs += 1
+
+                i -= 1
+                j -= 1
+        
+        return pairs
 
 '''
 Compute pairs of queens in conflict 
 '''
 def compute_attacking_pairs(state):
-    number_attacking_pairs = 0
-    # Your code here 
-    return number_attacking_pairs
+    attacking_pairs = 0
+    
+    for x in range(len(state)):
+        for y in range(len(state)):
+                if state[x][y] and state[x][y] == 'Q':
+                        attacking_pairs += queens_attacking(state, x, y)
+    print "attacking_pairs: " , attacking_pairs
+    return attacking_pairs
+
+
+
 
 '''
 The basic hill-climing algorithm for n queens
@@ -144,9 +210,3 @@ def n_queens(n, get_rand_st, comp_att_pairs, hill_descending):
     final_state = []
     # Your code here
     return final_state
-
-
-
-
-
-
