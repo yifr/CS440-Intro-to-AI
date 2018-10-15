@@ -1,10 +1,11 @@
 import random
+from random import randint
 import heapq as hq
 
 
 ''' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ '''
 '''
-                For Search Algorithms 
+        For Search Algorithms 
 '''
 ''' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ '''
 bfs_q = [] #Queue for BFS (append/pop(0))
@@ -110,7 +111,7 @@ def pop_front_ASTAR():
 
 ''' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ '''
 '''
-                For n-queens problem 
+        For n-queens problem 
 '''
 ''' ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ '''
 
@@ -120,93 +121,96 @@ Compute a random state
 '''
 def get_random_state(n):
     state = []
-    rand = []
     c = 0
     while c < n:
-        rand.append(random.randint(0,n-1))
+        state.append(random.randint(1,n))
         c = c+1
-        
+    '''  
     #PrintChessboard
-    state = []
+    chessboard = []
     for x in range(n):
         newchessrow = []
         for y in range (n):
             newchessrow.append("[]")
-        state.append(newchessrow)
+        chessboard.append(newchessrow)
     
     for x in range( len(state)):
-        state[rand[x]][x] = "Q"
+        chessboard[state[x]][x] = "Q "
     
-    for x in state:
+    for x in chessboard:
         print x
         print " "
-    
+    '''
     return state
-
-
-def queens_attacking(state, x, y):
-        pairs = 0
-        #Horizontal:
-        for i in range(x + 1, len(state)):
-            if state[i][y] == 'Q':
-                pairs += 1 
-        
-        #Vertical:
-        for j in range(y+1, len(state)):
-                if state[x][j] == 'Q':
-                        pairs += 1
-
-
-        #Diagonal right
-        i = x + 1
-        j = y + 1
-        while i < len(state) and j < len(state):
-                if state[i][j] == 'Q':
-                        pairs += 1
-
-                i += 1
-                j += 1
-
-        #Diagonal left
-        i = x - 1
-        j = y - 1
-        while i >= 0 and j >= 0:
-                if state[i][j] == 'Q':
-                        pairs += 1
-
-                i -= 1
-                j -= 1
-        
-        return pairs
 
 '''
 Compute pairs of queens in conflict 
 '''
 def compute_attacking_pairs(state):
-    attacking_pairs = 0
+    number_attacking_pairs = 0
+    #It's all good vertically
     
-    for x in range(len(state)):
-        for y in range(len(state)):
-                if state[x][y] and state[x][y] == 'Q':
-                        attacking_pairs += queens_attacking(state, x, y)
-    print "attacking_pairs: " , attacking_pairs
-    return attacking_pairs
-
-
-
+    #CheckHorizontally
+    for x in range(0,len(state)):
+        for y in range(0,len(state)):
+            if x != y:
+                if state[x] == state[y]:
+                    number_attacking_pairs = number_attacking_pairs + 1
+    
+    #CheckDiagonals
+    for x in range(0,len(state)):
+        for y in range(0,len(state)):
+            if x != y:
+                if (abs(x - y)) == (abs(state[x]-state[y])):
+                    number_attacking_pairs = number_attacking_pairs + 1
+    
+    number_attacking_pairs = number_attacking_pairs/2
+    #print number_attacking_pairs
+    return number_attacking_pairs
 
 '''
 The basic hill-climing algorithm for n queens
 '''
 def hill_desending_n_queens(state, comp_att_pairs):
-    final_state = []
-    # Your code here
+    
+    #state = [4,5,7,5,2,5,1]
+    #comp_att_pairs(state)
+    
+    #My Code Here
+    n = len(state)
+    
+    alternateState = state
+    
+    options = []
+    
+    for x in range(0,n):
+        alternateState = state
+        options = []
+        for y in range(1,n+1):
+            alternateState[x] = y
+            options.append(comp_att_pairs(alternateState))
+        a = min(options)
+        state[x] = options.index(a) + 1
+    
+    final_state = state
+    
     return final_state
 
 '''
 Hill-climing algorithm for n queens with restart
 '''
 def n_queens(n, get_rand_st, comp_att_pairs, hill_descending):
-    final_state = []
+    
+    x = 1
+    state = []
+    
+    while(x != 0):
+        state = get_rand_st(n)
+        hill_descending(state,comp_att_pairs)
+        x = comp_att_pairs(state)
+    
+    final_state = state
+    
+    #print comp_att_pairs(final_state)
     # Your code here
     return final_state
