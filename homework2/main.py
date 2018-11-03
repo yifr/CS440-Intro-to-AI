@@ -117,9 +117,10 @@ if __name__ == "__main__":
     print
     print "The n-queens problem" 
 
-    n = 5 
+    n = 20 
     # Get a basic state
     state = mp.get_random_state(n)
+    #state = [4,5,7,5,2,5,1]
     print "A random atate: " + str(state) + ", conflicting pairs: " + str(mp.compute_attacking_pairs(state))
 
     # Call hill-climbing once 
@@ -128,7 +129,7 @@ if __name__ == "__main__":
           + str(mp.compute_attacking_pairs(new_state))
 
     # Get a fully solved state for a given n    
-    print "A valid solution: " + str(mp.hill_desending_n_queens_random_restart(n,
+    print "A valid solution: " + str(mp.n_queens(n,
         mp.get_random_state, mp.compute_attacking_pairs,mp.hill_desending_n_queens))
 
     
