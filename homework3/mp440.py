@@ -12,70 +12,134 @@ If the move is not valid, then the value 0 (zero) should be returned. Note
 here that row and column both start with index 0. 
 '''
 def get_move_value(state, player, row, column):
+    total_flipped = 0
+    opponent = 'W' if player == 'B' else 'B'
+
+    # Check pieces flipped in a column #
+    #Forwards:
     flipped = 0
-    # Check pieces flipped in a row #
     i = row + 1
     j = column
-    #Forwards:
-    while i < len(state) and (state[i][j] == 'W' or state[i][j] == 'B'):
-        if state[i][j] != player:
+    while i < len(state):
+        if state[i][j] == opponent:
             flipped += 1
             i += 1 
-        else: 
+        #No sandwiching player piece:
+        elif state[i][j] == ' ': 
             break
+        elif state[i][j] == player:
+            total_flipped += flipped
+            break
+
+
+    #Backwards:
+    flipped = 0
     i = row - 1
     j = column
-    #Backwards:
-    while i >= 0 and (state[i][j] == 'W' or state[i][j] == 'B'):
-        if state[i][j] != player:
+    while i >= 0:
+        if state[i][j] == opponent:
             flipped += 1
             i -= 1 
-        else: 
+        elif state[i][j] == ' ': 
             break
-    
-    # Check pieces flipped in a column #
+        elif state[i][j] == player:
+            total_flipped += flipped
+            break
+
+
+    # Check pieces flipped in a row #
     #Up:
+    flipped = 0
     i = row
     j = column + 1
-    while j < len(state) and (state[i][j] == 'W' or state[i][j] == 'B'):
-        if state[i][j] != player:
+    while j < len(state[i]):
+        if state[i][j] == opponent:
             flipped += 1
             j += 1 
-        else: 
+        elif state[i][j] == ' ': 
             break
+        elif state[i][j] == player:
+            total_flipped += flipped
+            break
+    
+
     #Down:
+    flipped = 0
     i = row
     j = column - 1
-    while j >= 0 and (state[i][j] == 'W' or state[i][j] == 'B'):
+    while j >= 0:
         if state[i][j] != player:
             flipped += 1
             j -= 1 
-        else: 
+        elif state[i][j] == ' ': 
+            break
+        elif state[i][j] == player:
+            total_flipped += flipped
             break
 
+
     # Check pieces flipped diagonally #
-    #Up:
+    #Down Right:
+    flipped = 0
     i = row + 1
     j = column + 1
-    while (i < len(state) and j < len(state[i])) and (state[i][j] == 'W' or state[i][j] == 'B'):
-        if state[i][j] != player:
+    while i < len(state) and j < len(state[i]):
+        if state[i][j] == opponent:
             flipped += 1
             i += 1 
             j += 1
-        else: 
+        elif state[i][j] == ' ': 
             break
-    #Down:
+        elif state[i][j] == player:
+            total_flipped += flipped
+            break
+
+    #Down Left:
+    flipped = 0
+    i = row + 1
+    j = column - 1
+    while i < len(state) and j >= 0:
+        if state[i][j] == opponent:
+            flipped += 1
+            i += 1 
+            j -= 1
+        elif state[i][j] == ' ': 
+            break
+        elif state[i][j] == player:
+            total_flipped += flipped
+            break
+
+    #Up Right:
+    flipped = 0
+    i = row - 1
+    j = column + 1
+    while i >= 0 and j < len(state[i]):
+        if state[i][j] == opponent:
+            flipped += 1
+            i -= 1 
+            j += 1
+        elif state[i][j] == ' ': 
+            break
+        elif state[i][j] == player:
+            total_flipped += flipped
+            break
+
+    #Up Left:
+    flipped = 0
     i = row - 1
     j = column - 1
-    while (i >= 0 and j >= 0) and (state[i][j] == 'W' or state[i][j] == 'B'):
-        if state[i][j] != player:
+    while i >= 0 and j >= 0:
+        if state[i][j] == opponent:
             flipped += 1
             i -= 1 
             j -= 1
-        else: 
+        elif state[i][j] == ' ': 
+            break
+        elif state[i][j] == player:
+            total_flipped += flipped
             break
 
-    return flipped
+    return total_flipped
 
 
 '''
@@ -95,6 +159,7 @@ return value should be two tuple in the format of (blackpeices, white pieces), e
     return (4, 3)
 '''
 def count_pieces(state):
+    #If there's no state there are no pieces
     if not state:
         return (0, 0)
     
@@ -114,15 +179,15 @@ def count_pieces(state):
 Check whether a state is a terminal state. 
 '''
 def is_terminal_state(state, state_list = None):
-    if not state:   #If there is no state, we're in a terminal state?
+    if not state:   #If there is no state, we're in a terminal state
         return True
 
     for i in range(len(state)):
         for j in range(len(state)):
+                #Check if black or white can gain points by moving to an empty position:
                 if state[i][j] == '':
-                    #Check if black or white have possible moves at this position:
                     black_value = get_move_value(state, 'B', i, j)
-                    if black_value > 0:
+                    if black_value > 0: 
                             return False 
 
                     white_value = get_move_value(state, 'W', i, j)
@@ -140,6 +205,7 @@ def minimax(state, player):
     value = 0
     row = -1
     column = -1
+    
      
     return (value, row, column)
 
