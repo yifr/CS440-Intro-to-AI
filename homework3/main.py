@@ -54,7 +54,7 @@ if __name__ == "__main__":
     print 
 
     # Get game value
-    print "The sate of the game is: " + str(mp.count_pieces(game_state))
+    print "The state of the game is: " + str(mp.count_pieces(game_state))
     print 
 
     # Test move values
