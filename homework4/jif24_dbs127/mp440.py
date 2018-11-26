@@ -62,7 +62,7 @@ implementation.
 The percentage parameter controls what percentage of the example data
 should be used for training. 
 '''
-def compute_statistics(data, label, width, height, feature_extractor, percentage=80.0, k = 0.001):
+def compute_statistics(data, label, width, height, feature_extractor, percentage=100.0, k = .005):
     num_training = int(percentage*len(data)/100)     #Number of examples to use in training
     label_freq = [0]*10                                 #Instances of label y
     
@@ -82,10 +82,13 @@ def compute_statistics(data, label, width, height, feature_extractor, percentage
             for j in range(len(features)):
                 if features[j] == True:
                     Cf_i[label[i]][j] += 1
+
         #Calculate probabilities:
         for i in range(len(Cf_i)):
             for j in range(len(Cf_i[i])):
-                a = (Cf_i[i][j] + k)/(label_freq[i] + k)
+                a = (Cf_i[i][j] + k)/(label_freq[i] + (2*k))
+                if a == 0.0:
+                    print Cf_i[i][j] + k, label_freq[i] + 2*k, (Cf_i[i][j] + k)/(label_freq[i] + 2*k)
                 Pf_i[i][j] = a
 '''
 For the given features for a single digit image, compute the class 
@@ -96,12 +99,15 @@ def compute_class(features):
         prob = math.log(p_label[i])        #Probability of image belonging to class i
         for j in range(len(features)):
             if features[j] == True:
-                prob += math.log(Pf_i[i][j])
+                prob += math.log(Pf_i[i][j]) 
+            else:
+                prob += math.log(1 - Pf_i[i][j])
+        
         
         if predicted['prob'] < prob:
             predicted['label'] = i
             predicted['prob'] = prob
-
+  
     return predicted['label']
 
 '''

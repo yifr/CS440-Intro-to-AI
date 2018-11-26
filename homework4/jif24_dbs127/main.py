@@ -3,6 +3,7 @@ import time
 import sys
 import os
 import random
+from collections import Counter
 
 DATA_WIDTH=28
 DATA_HEIGHT=28
@@ -96,8 +97,7 @@ if __name__ == "__main__":
     example_number = random.randint(0, NUMBER_OF_TRAINING_EXAMPLES)
     print "Printing digit example #" + str(example_number + 1) + " with label: " \
         + str(ALL_TRAINING_LABELS[example_number])
-    for i in ALL_TRAINING_IMAGES:
-        _print_digit_image(i)
+    _print_digit_image(ALL_TRAINING_IMAGES[example_number])
     print 
 
     # Calling the basic feature extractor 
@@ -112,12 +112,25 @@ if __name__ == "__main__":
     # Making predictions on validation data 
     predicted_labels = mp.classify(ALL_VALIDATION_IMAGES, DATA_WIDTH, DATA_HEIGHT,
         mp.extract_basic_features)
-
+    
+    incorrect = []
     correct_count = 0.0
     for ei in range(len(predicted_labels)):
         if(ALL_VALIDATION_LABELS[ei] == predicted_labels[ei]):
             correct_count += 1
+        else:
+            incorrect.append((ALL_VALIDATION_LABELS[ei], predicted_labels[ei]))
 
+    c = Counter()
+    for i in incorrect:
+        c[i] += 1
+    f = open('stats.txt', 'a')
+    f.write('\n\n')
+    for i in c:
+        s = "Classification error: " + str(i) + ", Occurrences: " + str(c[i]) + '\n' 
+        f.write(s)
+    f.write('\n\n')
+    f.close()
     print "Correct prediction: " + str(correct_count/len(predicted_labels))
 
 

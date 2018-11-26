@@ -1,0 +1,117 @@
+#################################
+# CHARACTER COMPOSITION ANALYSIS
+################################
+
+Number: 0
+Whitespace: 611
+108 #s
+64 +s
+
+Number: 1
+Whitespace: 706
+46 #s
+30 +s
+
+Number: 2
+Whitespace: 636
+88 #s
+58 +s
+
+Number: 3
+Whitespace: 639
+84 #s
+59 +s
+
+Number: 4
+Whitespace: 660
+71 #s
+52 +s
+
+Number: 5
+Whitespace: 651
+74 #s
+58 +s
+
+Number: 6
+Whitespace: 648
+81 #s
+54 +s
+
+Number: 7
+Whitespace: 667
+69 #s
+47 +s
+
+Number: 8
+Whitespace: 632
+88 #s
+62 +s
+
+Number: 9
+Whitespace: 659
+71 #s
+52 +s
+
+
+##################################
+# COMMON MISTAKES:
+#################################
+Classification error: (5, 9), Occurrences: 1
+Classification error: (1, 3), Occurrences: 2
+Classification error: (9, 1), Occurrences: 1
+Classification error: (4, 8), Occurrences: 2
+Classification error: (5, 6), Occurrences: 2
+Classification error: (2, 8), Occurrences: 7
+Classification error: (9, 8), Occurrences: 3
+Classification error: (8, 0), Occurrences: 1
+Classification error: (3, 2), Occurrences: 2
+Classification error: (2, 1), Occurrences: 4
+Classification error: (8, 9), Occurrences: 3
+Classification error: (6, 2), Occurrences: 6
+Classification error: (1, 6), Occurrences: 1
+Classification error: (9, 4), Occurrences: 5
+Classification error: (3, 7), Occurrences: 3
+Classification error: (8, 5), Occurrences: 1
+Classification error: (5, 8), Occurrences: 2
+Classification error: (4, 0), Occurrences: 1
+Classification error: (3, 8), Occurrences: 4
+Classification error: (4, 9), Occurrences: 22
+Classification error: (2, 9), Occurrences: 3
+Classification error: (2, 0), Occurrences: 1
+Classification error: (1, 5), Occurrences: 1
+Classification error: (7, 2), Occurrences: 1
+Classification error: (3, 6), Occurrences: 3
+Classification error: (5, 7), Occurrences: 3
+Classification error: (5, 3), Occurrences: 11
+Classification error: (4, 1), Occurrences: 1
+Classification error: (6, 4), Occurrences: 2
+Classification error: (5, 4), Occurrences: 3
+Classification error: (2, 6), Occurrences: 1
+Classification error: (5, 0), Occurrences: 3
+Classification error: (7, 1), Occurrences: 3
+Classification error: (4, 5), Occurrences: 1
+Classification error: (9, 3), Occurrences: 1
+Classification error: (6, 0), Occurrences: 3
+Classification error: (3, 5), Occurrences: 2
+Classification error: (3, 9), Occurrences: 4
+Classification error: (2, 3), Occurrences: 2
+Classification error: (0, 8), Occurrences: 6
+Classification error: (6, 5), Occurrences: 5
+Classification error: (7, 9), Occurrences: 10
+Classification error: (2, 7), Occurrences: 3
+Classification error: (8, 3), Occurrences: 10
+Classification error: (7, 3), Occurrences: 1
+Classification error: (4, 6), Occurrences: 3
+Classification error: (7, 8), Occurrences: 3
+Classification error: (6, 1), Occurrences: 1
+Classification error: (3, 1), Occurrences: 2
+Classification error: (5, 2), Occurrences: 1
+Classification error: (8, 2), Occurrences: 2
+Classification error: (7, 4), Occurrences: 5
+Classification error: (0, 6), Occurrences: 1
+Classification error: (0, 5), Occurrences: 1
+Classification error: (3, 4), Occurrences: 1
+Classification error: (2, 4), Occurrences: 1
+Classification error: (8, 4), Occurrences: 5
+
+
