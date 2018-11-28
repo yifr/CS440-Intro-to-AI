@@ -119,6 +119,42 @@ def analyze():
                 
         f.write(s)
 
+def find_lines():
+    max_horizontal = [0]*10
+    max_vertical = [0]*10
+    label_count = [0]*10
+    
+    for i in range(len(t_image)):
+        m_h = 0
+        m_v = 0
+        pic = t_image[i]
+        label = t_label[i]
+        label_count[label] += 1
 
+        for j in range(28):
+            for k in range(28):
+                if pic[j][k] != 0:
+                    m_h += 1
+                elif max_horizontal[label] < m_h:
+                    print max_horizontal[label],  m_h
+                    max_horizontal[label] = m_h
+                    m_h = 0
+                
+                if pic[k][j] != 0:
+                    m_v += 1
+                elif max_vertical[label] < m_v:
+                    print max_vertical[label],  m_v
+
+                    max_vertical[label] = m_v
+                    m_v = 0
+    print max_horizontal
+    print max_vertical
+    for i in range(10):
+        max_horizontal[i] = max_horizontal[i] / label_count[i]
+        max_vertical[i] = max_vertical[i] / label_count[i]
+
+    print max_horizontal
+    print max_vertical
 _load_all_data()
-analyze()
+#analyze()
+find_lines()

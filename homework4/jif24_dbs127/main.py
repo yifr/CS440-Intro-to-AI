@@ -120,17 +120,20 @@ if __name__ == "__main__":
             correct_count += 1
         else:
             incorrect.append((ALL_VALIDATION_LABELS[ei], predicted_labels[ei]))
-
+    '''
     c = Counter()
     for i in incorrect:
         c[i] += 1
+    c = c.most_common()
+    print(c)
     f = open('stats.txt', 'a')
     f.write('\n\n')
     for i in c:
-        s = "Classification error: " + str(i) + ", Occurrences: " + str(c[i]) + '\n' 
+        s = "Classification error: " + str(i[0]) + ", Occurrences: " + str(i[1]) + '\n' 
         f.write(s)
     f.write('\n\n')
     f.close()
+    '''
     print "Correct prediction: " + str(correct_count/len(predicted_labels))
 
 
