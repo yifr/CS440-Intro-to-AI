@@ -5,6 +5,7 @@ import sys
 
 
 Pf_i = [[0 for i in range(784)] for j in range(10)]     #Probability of features for label i
+quadrant_density =[[0 for i in range(4)] for j in range(10)]
 p_label = [0]*10
 
 '''
@@ -34,10 +35,26 @@ Extract advanced features that you will come up with
 '''
 def extract_advanced_features(digit_data, width, height):
     features=[]
-    # Your code starts here 
-    # You should remove _raise_not_defined() after you complete your code
-    # Your code ends here 
-    _raise_not_defined()
+    #1) Compute quadrant density:
+    quad_size = 196     #14 x 14 squares
+    density = [0]*4
+        
+    #compute densities
+    for i in range(28):
+        for j in range(28):
+            if i < 14 and j < 14 and digit_data[i][j] != 0:
+                density[0] += 1
+            elif i > 14 and j >= 14 and digit_data[i][j] != 0:
+                density[1] += 1
+            elif i >= 14 and j < 14 and digit_data[i][j] != 0:
+                density[2] += 1
+            elif i >= 14 and j >= 14 and digit_data[i][j] != 0:
+                density[3] += 1
+
+        for d in density:
+            d /= quad_size
+
+    features.append(density)
     return features
 
 '''
@@ -62,51 +79,94 @@ implementation.
 The percentage parameter controls what percentage of the example data
 should be used for training. 
 '''
-def compute_statistics(data, label, width, height, feature_extractor, percentage=100.0, k = .005):
+def compute_statistics(data, labels, width, height, feature_extractor, percentage=100.0, k = .0005):
     num_training = int(percentage*len(data)/100)     #Number of examples to use in training
     label_freq = [0]*10                                 #Instances of label y
-    
-    #Count up the instances of each training label
-    for i in range(num_training):
-        label_freq[label[i]] += 1
-
-    #Compute the probability of a given label: P(y)
-    for i in range(10):
-        p_label[i] = label_freq[i]*1.0 / num_training
-
+   
+    ###############################
+    # BASIC FEATURES
+    ###############################
     if feature_extractor == extract_basic_features:
-        Cf_i = [[0 for i in range(784)] for j in range(10)]     #Count of features for label i
+        pix_freq = [[0 for i in range(784)] for j in range(10)]     #Count of features for label i
         #Counting up occurrences of "True" features for label i at pixel j (i in [0,9], j in [0, 783])
         for i in range(num_training):
+            label = labels[i]
+            label_freq[label] += 1
             features = feature_extractor(data[i], width, height)
             for j in range(len(features)):
                 if features[j] == True:
-                    Cf_i[label[i]][j] += 1
+                    pix_freq[label][j] += 1
+
+        #Compute the probability of a given label: P(y)
+        for i in range(10):
+            p_label[i] = label_freq[i]*1.0 / num_training
 
         #Calculate probabilities:
-        for i in range(len(Cf_i)):
-            for j in range(len(Cf_i[i])):
-                a = (Cf_i[i][j] + k)/(label_freq[i] + (2*k))
-                if a == 0.0:
-                    print Cf_i[i][j] + k, label_freq[i] + 2*k, (Cf_i[i][j] + k)/(label_freq[i] + 2*k)
+        for i in range(len(pix_freq)):
+            for j in range(len(pix_freq[i])):
+                a = (pix_freq[i][j] + k)/(label_freq[i] + (2*k))
                 Pf_i[i][j] = a
+    
+    ###############################
+    # ADVANCED FEATURES
+    ###############################
+    elif feature_extractor == extract_advanced_features:
+        Df_i = [[0 for j in range(4)] for i in range(10)]     #Count of quadrant density for label i
+        #Counting up occurrences of "True" features for label i at pixel j (i in [0,9], j in [0, 783])
+        for i in range(num_training):
+            features = feature_extractor(data[i], width, height)
+            density = features[0]
+            label = labels[i]
+            label_freq[label] += 1
+            for j in range(4):
+                Df_i[label][j] += density[j]
+        
+        #Compute the probability of a given label: P(y)
+        for i in range(10):
+            p_label[i] = label_freq[i]*1.0 / num_training
+
+        #Calculate probabilities:
+        for i in range(len(Df_i)):
+            for j in range(len(Df_i[i])):
+                a = (Df_i[i][j] + k)/(label_freq[i] + (2*k))
+                '''
+                print "q_density:", Df_i[i][j]
+                print 'Df_i[i][j] + k', Df_i[i][j] + k
+                print 'label_Freq + 2*k', label_freq[i]+ (2*k)
+                print 'total prob:', a
+                print "\n"
+                '''
+                quadrant_density[i][j] = a
 '''
 For the given features for a single digit image, compute the class 
 '''
-def compute_class(features):
+def compute_class(features, feature_extractor=None):
     predicted = {'label': -1, 'prob': -100000000}
-    for i in range(10):
-        prob = math.log(p_label[i])        #Probability of image belonging to class i
-        for j in range(len(features)):
-            if features[j] == True:
-                prob += math.log(Pf_i[i][j]) 
-            else:
-                prob += math.log(1 - Pf_i[i][j])
-        
-        
-        if predicted['prob'] < prob:
-            predicted['label'] = i
-            predicted['prob'] = prob
+
+    if feature_extractor == extract_basic_features:
+        for i in range(10):
+            prob = math.log(p_label[i])        #Probability of image belonging to class i
+            for j in range(len(features)):
+                if features[j] == True:
+                    prob += math.log(Pf_i[i][j]) 
+                else:
+                    prob += math.log(1 - Pf_i[i][j])
+            
+            if predicted['prob'] < prob:
+                predicted['label'] = i
+                predicted['prob'] = prob
+    
+    elif feature_extractor == extract_advanced_features:
+        for i in range(10):
+            print str(i), ':', quadrant_density[i]
+            print "\n\n"
+            prob = math.log(p_label[i])        #Probability of image belonging to class i
+            for j in range(len(features[0])):
+                prob += math.log(quadrant_density[i][j])
+                
+            if predicted['prob'] < prob:
+                predicted['label'] = i
+                predicted['prob'] = prob
   
     return predicted['label']
 
@@ -119,7 +179,7 @@ def classify(data, width, height, feature_extractor):
 
     for picture in data:
         features = feature_extractor(picture, width, height)
-        label = compute_class(features)
+        label = compute_class(features, feature_extractor)
         predicted.append(label)
 
     return predicted
