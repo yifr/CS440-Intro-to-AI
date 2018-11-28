@@ -4,8 +4,12 @@ import math
 import sys
 
 
-Pf_i = [[0 for i in range(784)] for j in range(10)]     #Probability of features for label i
-quadrant_density =[[0 for i in range(4)] for j in range(10)]
+Pf_i = [[0 for j in range(784)] for i in range(10)]         #Probability of feature being True/False for pixel j, label i
+P_edges = [[0 for j in range(784)] for i in range(10)]      #Probability of edges being true for pixel j, label i
+P_body = [[0 for j in range(784)] for i in range(10)]       #Probability of body being true for pixel j, label i
+P_whitespace = [[0 for j in range(784)] for i in range(10)]      #Probability of edges being true for pixel j, label i
+
+quadrant_density =[[0 for j in range(4)] for i in range(10)]
 p_label = [0]*10
 
 '''
@@ -36,12 +40,28 @@ Extract advanced features that you will come up with
 def extract_advanced_features(digit_data, width, height):
     features=[]
     #1) Compute quadrant density:
-    quad_size = 196     #14 x 14 squares
+    #quad_size = 196     #14 x 14 squares
     density = [0]*4
-        
-    #compute densities
+    edges = []
+    body = []
+    whitespace = []
+    #compute: whitespace, # count, + count
     for i in range(28):
         for j in range(28):
+            if digit_data[i][j] == 2:
+                edges.append(True)
+                body.append(False)
+                whitespace.append(False)
+            elif digit_data[i][j] == 1:
+                body.append(True)
+                edges.append(False)
+                whitespace.append(False)
+            else:
+                body.append(False)
+                edges.append(False)
+                whitespace.append(True)
+            
+            '''
             if i < 14 and j < 14 and digit_data[i][j] != 0:
                 density[0] += 1
             elif i > 14 and j >= 14 and digit_data[i][j] != 0:
@@ -53,8 +73,11 @@ def extract_advanced_features(digit_data, width, height):
 
         for d in density:
             d /= quad_size
+            '''     
+    features.append(edges)
+    features.append(body)
+    features.append(whitespace)
 
-    features.append(density)
     return features
 
 '''
@@ -79,7 +102,7 @@ implementation.
 The percentage parameter controls what percentage of the example data
 should be used for training. 
 '''
-def compute_statistics(data, labels, width, height, feature_extractor, percentage=100.0, k = .0005):
+def compute_statistics(data, labels, width, height, feature_extractor, percentage=100.0, k=.0005):
     num_training = int(percentage*len(data)/100)     #Number of examples to use in training
     label_freq = [0]*10                                 #Instances of label y
    
@@ -104,39 +127,47 @@ def compute_statistics(data, labels, width, height, feature_extractor, percentag
         #Calculate probabilities:
         for i in range(len(pix_freq)):
             for j in range(len(pix_freq[i])):
-                a = (pix_freq[i][j] + k)/(label_freq[i] + (2*k))
+                a = (pix_freq[i][j] + k)/(label_freq[i] + (k))
                 Pf_i[i][j] = a
     
     ###############################
     # ADVANCED FEATURES
     ###############################
     elif feature_extractor == extract_advanced_features:
-        Df_i = [[0 for j in range(4)] for i in range(10)]     #Count of quadrant density for label i
+        Ef_i = [[0 for i in range(784)] for j in range(10)]   #Count of edge pixels (features) for label i
+        Bf_i = [[0 for i in range(784)] for j in range(10)]   #Count of body pixels (features) for label i
+        Wf_i = [[0 for j in range(784)] for i in range(10)]     #Count of quadrant density for label i
+        
         #Counting up occurrences of "True" features for label i at pixel j (i in [0,9], j in [0, 783])
         for i in range(num_training):
-            features = feature_extractor(data[i], width, height)
-            density = features[0]
             label = labels[i]
             label_freq[label] += 1
-            for j in range(4):
-                Df_i[label][j] += density[j]
-        
+            features = feature_extractor(data[i], width, height)
+            edges = features[0]
+            body = features[1]
+            whitespace = features[2]
+            
+
+            for i in range(len(edges)):
+                Ef_i[label][i] += edges[i]
+                Bf_i[label][i] += body[i]
+                Wf_i[label][i] += whitespace[i]
+
         #Compute the probability of a given label: P(y)
         for i in range(10):
             p_label[i] = label_freq[i]*1.0 / num_training
 
         #Calculate probabilities:
-        for i in range(len(Df_i)):
-            for j in range(len(Df_i[i])):
-                a = (Df_i[i][j] + k)/(label_freq[i] + (2*k))
-                '''
-                print "q_density:", Df_i[i][j]
-                print 'Df_i[i][j] + k', Df_i[i][j] + k
-                print 'label_Freq + 2*k', label_freq[i]+ (2*k)
-                print 'total prob:', a
-                print "\n"
-                '''
-                quadrant_density[i][j] = a
+        for i in range(len(Ef_i)):
+            for j in range(len(Ef_i[i])):
+                a = (Ef_i[i][j] + k)/(label_freq[i] + (2*k))
+                P_edges[i][j] = a
+
+                b = (Bf_i[i][j] + k)/(label_freq[i] + (2*k))
+                P_body[i][j] = b
+
+                c = (Wf_i[i][j] + k)/(label_freq[i] + (2*k))
+                P_whitespace[i][j] = c
 '''
 For the given features for a single digit image, compute the class 
 '''
@@ -157,17 +188,46 @@ def compute_class(features, feature_extractor=None):
                 predicted['prob'] = prob
     
     elif feature_extractor == extract_advanced_features:
+        edges = features[0]
+        body = features[1]
+        #q_density = features[2]
+
         for i in range(10):
-            print str(i), ':', quadrant_density[i]
-            print "\n\n"
             prob = math.log(p_label[i])        #Probability of image belonging to class i
             for j in range(len(features[0])):
-                prob += math.log(quadrant_density[i][j])
-                
+                if edges[j] == True:
+                    prob += math.log(P_edges[i][j]) 
+                    prob += math.log(1-P_body[i][j]) 
+                    prob += math.log(1-P_whitespace[i][j]) 
+                elif body[j] == True:
+                    prob += math.log(1 - P_edges[i][j])
+                    prob += math.log(P_body[i][j]) 
+                    prob += math.log(1 - P_whitespace[i][j])
+                else:
+                    prob += math.log(1 - P_edges[i][j]) 
+                    prob += math.log(1 - P_body[i][j]) 
+                    prob += math.log(P_whitespace[i][j])
+
+                   
             if predicted['prob'] < prob:
                 predicted['label'] = i
                 predicted['prob'] = prob
-  
+        print predicted['prob']
+        #Use density corrections for commonly misclassified numbers
+        #9 -> 4
+        '''
+        if predicted['label'] == 9:
+            #9 has a higher average third quadrant density than four
+            if abs(quadrant_density[3][2] - q_density[2]) > abs(quadrant_density[8][2] - q_density[2]):
+                predicted['label'] = 4
+        
+        
+        if predicted['label'] == 3:
+            #9 has a higher average third quadrant density than four
+            if abs(quadrant_density[2][2] - q_density[2]) < abs(quadrant_density[7][2] - q_density[2]):
+                predicted['label'] = 8
+        '''
+
     return predicted['label']
 
 '''

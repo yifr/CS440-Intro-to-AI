@@ -100,26 +100,29 @@ if __name__ == "__main__":
     _print_digit_image(ALL_TRAINING_IMAGES[example_number])
     print 
 
-    # Calling the basic feature extractor 
-    features = mp.extract_basic_features(ALL_TRAINING_IMAGES[example_number],
-        DATA_WIDTH, DATA_HEIGHT)
+    for i in range(10, 11):
+        # Calling the basic feature extractor 
+        features = mp.extract_basic_features(ALL_TRAINING_IMAGES[example_number],
+            DATA_WIDTH, DATA_HEIGHT)
 
-    # Compute parameters for a Naive Bayes classifier using the basic feature
-    # extractor 
-    mp.compute_statistics(ALL_TRAINING_IMAGES, ALL_TRAINING_LABELS, DATA_WIDTH,
-        DATA_HEIGHT, mp.extract_advanced_features)
+        # Compute parameters for a Naive Bayes classifier using the basic feature
+        # extractor 
+        mp.compute_statistics(ALL_TRAINING_IMAGES, ALL_TRAINING_LABELS, DATA_WIDTH,
+            DATA_HEIGHT, mp.extract_advanced_features, percentage=10.0*i, k = .0001)
 
-    # Making predictions on validation data 
-    predicted_labels = mp.classify(ALL_VALIDATION_IMAGES, DATA_WIDTH, DATA_HEIGHT,
-        mp.extract_advanced_features)
-    
-    incorrect = []
-    correct_count = 0.0
-    for ei in range(len(predicted_labels)):
-        if(ALL_VALIDATION_LABELS[ei] == predicted_labels[ei]):
-            correct_count += 1
-        else:
-            incorrect.append((ALL_VALIDATION_LABELS[ei], predicted_labels[ei]))
+        # Making predictions on validation data 
+        predicted_labels = mp.classify(ALL_VALIDATION_IMAGES, DATA_WIDTH, DATA_HEIGHT,
+            mp.extract_advanced_features)
+        
+        incorrect = []
+        correct_count = 0.0
+        for ei in range(len(predicted_labels)):
+            if(ALL_VALIDATION_LABELS[ei] == predicted_labels[ei]):
+                correct_count += 1
+            else:
+                incorrect.append((ALL_VALIDATION_LABELS[ei], predicted_labels[ei]))
+        print "Correct prediction: " + str(correct_count/len(predicted_labels))
+
     '''
     c = Counter()
     for i in incorrect:
@@ -134,7 +137,6 @@ if __name__ == "__main__":
     f.write('\n\n')
     f.close()
     '''
-    print "Correct prediction: " + str(correct_count/len(predicted_labels))
 
 
     
