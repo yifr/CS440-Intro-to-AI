@@ -40,7 +40,7 @@ Extract advanced features that you will come up with
 def extract_advanced_features(digit_data, width, height):
     features=[]
     #1) Compute quadrant density:
-    #quad_size = 196     #14 x 14 squares
+    quad_size = 196     #14 x 14 squares
     density = [0]*4
     edges = []
     body = []
@@ -61,7 +61,7 @@ def extract_advanced_features(digit_data, width, height):
                 edges.append(False)
                 whitespace.append(True)
             
-            '''
+            
             if i < 14 and j < 14 and digit_data[i][j] != 0:
                 density[0] += 1
             elif i > 14 and j >= 14 and digit_data[i][j] != 0:
@@ -71,13 +71,13 @@ def extract_advanced_features(digit_data, width, height):
             elif i >= 14 and j >= 14 and digit_data[i][j] != 0:
                 density[3] += 1
 
-        for d in density:
-            d /= quad_size
-            '''     
+    for d in density:
+        d /= quad_size*1.0
+               
     features.append(edges)
     features.append(body)
     features.append(whitespace)
-
+    features.append(density)
     return features
 
 '''
@@ -136,8 +136,8 @@ def compute_statistics(data, labels, width, height, feature_extractor, percentag
     elif feature_extractor == extract_advanced_features:
         Ef_i = [[0 for i in range(784)] for j in range(10)]   #Count of edge pixels (features) for label i
         Bf_i = [[0 for i in range(784)] for j in range(10)]   #Count of body pixels (features) for label i
-        Wf_i = [[0 for j in range(784)] for i in range(10)]     #Count of quadrant density for label i
-        
+        Wf_i = [[0 for j in range(784)] for i in range(10)]   #Count of whitespace for label i
+        Df_i = [[0 for j in range(4)] for i in range(10)]     #Count of quadrant density 
         #Counting up occurrences of "True" features for label i at pixel j (i in [0,9], j in [0, 783])
         for i in range(num_training):
             label = labels[i]
@@ -145,18 +145,25 @@ def compute_statistics(data, labels, width, height, feature_extractor, percentag
             features = feature_extractor(data[i], width, height)
             edges = features[0]
             body = features[1]
-            whitespace = features[2]
-            
+            whitespace = features[2]   
+            density = features[3]
+
+            for i in range(4):
+                quadrant_density[label][i] += density[i]
 
             for i in range(len(edges)):
                 Ef_i[label][i] += edges[i]
                 Bf_i[label][i] += body[i]
                 Wf_i[label][i] += whitespace[i]
+                
 
         #Compute the probability of a given label: P(y)
         for i in range(10):
             p_label[i] = label_freq[i]*1.0 / num_training
 
+            for j in range(4):
+                quadrant_density[i][j] /= label_freq[i]
+        
         #Calculate probabilities:
         for i in range(len(Ef_i)):
             for j in range(len(Ef_i[i])):
@@ -190,7 +197,7 @@ def compute_class(features, feature_extractor=None):
     elif feature_extractor == extract_advanced_features:
         edges = features[0]
         body = features[1]
-        #q_density = features[2]
+        q_density = features[3]
 
         for i in range(10):
             prob = math.log(p_label[i])        #Probability of image belonging to class i
@@ -212,21 +219,23 @@ def compute_class(features, feature_extractor=None):
             if predicted['prob'] < prob:
                 predicted['label'] = i
                 predicted['prob'] = prob
-        print predicted['prob']
+
         #Use density corrections for commonly misclassified numbers
         #9 -> 4
         '''
         if predicted['label'] == 9:
+            print quadrant_density
             #9 has a higher average third quadrant density than four
-            if abs(quadrant_density[3][2] - q_density[2]) > abs(quadrant_density[8][2] - q_density[2]):
+            if abs(quadrant_density[3][2] - q_density[2]) < abs(quadrant_density[8][2] - q_density[2]):
+                print quadrant_density[3]
                 predicted['label'] = 4
-        
+        '''
         
         if predicted['label'] == 3:
-            #9 has a higher average third quadrant density than four
-            if abs(quadrant_density[2][2] - q_density[2]) < abs(quadrant_density[7][2] - q_density[2]):
+            
+            if (quadrant_density[2][2] < q_density[2]):
                 predicted['label'] = 8
-        '''
+        
 
     return predicted['label']
 
