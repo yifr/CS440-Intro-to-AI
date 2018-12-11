@@ -1,6 +1,8 @@
 import inspect
 import sys
+import math
 import numpy as np 
+from numpy import linalg as LA
 from numpy import dot
 from numpy import transpose 
 from numpy.linalg import inv
@@ -20,13 +22,12 @@ def kf_predict(A, X_prev, B, U, P_prev, Q):
     return (predicted_x, predicted_p)
 
 def kf_update(H, P, X, R, z):
-    #Kalman gain = PH^T((HPH^T)+R)^-1
+    #Kalman gain = PH^T((HPH^T)+R)-1
     kalman_gain = P*transpose(H)*inv(H*P*transpose(H) + R)
     x_updated = X + kalman_gain*(z - H*X)
     p_updated = (np.identity(2) - kalman_gain*H)*P 
 
     return (x_updated, p_updated)
-
 
 '''
 Kalman 2D
@@ -85,42 +86,55 @@ def plot(data, output):
 Kalman 2D 
 '''
 P0 =  2 * np.identity(2)
-ghost_tracks = [[0,0]]
+last_ghost_sighting = transpose(np.matrix([0, 0]))
 error_estimates = [P0]
 def kalman2d_shoot(ux, uy, ox, oy, reset=False):
     global P0
-    global ghost_tracks
+    global last_ghost_sighting
     global error_estimates
 
     if reset == True:
         P0 =  2 * np.identity(2)
-        ghost_tracks = [[0,0]]
+        last_ghost_sighting = transpose(np.matrix([0, 0]))
         error_estimates = [P0]
 
     A = np.identity(2)
     B = np.identity(2)
     H = np.identity(2)
     Q = np.matrix([[0.0001, 0.00002], [ 0.00002,0.0001]])    #Covariance matrix for zero mean Gaussian system noise w
-    R = np.matrix([[0.01, 0.05], [0.05, 0.02]])            #Covariance matrix for zero mean Gaussian measurement noise 
-    u = transpose([ux, uy])
-    z = transpose([ox, oy])
-    
-    (x_pred, p_pred) = kf_predict(A, ghost_tracks.pop(), B, u, error_estimates.pop(), Q)
+    R = np.matrix([[0.01, 0.05], [0.05, 0.02]])            #Covariance matrix for zero mean Gaussian measurement noise
+    u = transpose(np.matrix([ux, uy]))
+    z = transpose(np.matrix([ox, oy])) 
+    #u = transpose([ux, uy])
+    #z = transpose([ox, oy])
+    x_prev = last_ghost_sighting
+    error_prev = error_estimates.pop()
+    (x_pred, p_pred) = kf_predict(A, x_prev, B, u, error_prev, Q)
     (x_updated, p_updated) = kf_update(H, p_pred, x_pred, R, z)
-    
-    print p_updated
-    print 
+    #Maybe use sum of eigenvalues as shooting metric?
+    w, v = LA.eig(p_updated)
+    distance_traveled = difference(x_updated, x_prev)
+    '''
+    print 'Distance calculated from last sighting: ', distance_traveled
+    print 'Error covariance: \t', p_updated
+    print "Eigenvalue calculations:"
+    print w, sum(w), sum(v)
     print
-    if p_updated.item(0) < .0015 and p_updated.item(2) < 0.014:
+    print
+    '''
+    if sum(w) < 0.005 and distance_traveled < 5:  #\
+    #or (p_updated.item(0) < .0015 and p_updated.item(3) < 0.01 or p_updated.item(1) < .0015 and p_updated.item(2) < 0.015):
+    #if sum(w) < 0.005 and distance_traveled < 10:
         return ((x_updated.item(0), x_updated.item(1), True))
     
-    ghost_tracks.append(x_updated)
+    last_ghost_sighting = x_updated
     error_estimates.append(p_updated)
 
     return ((x_updated.item(0), x_updated.item(1), False))
 
-    
 
+def difference(current, prev):
+    return math.sqrt((current[0] - prev[0])**2 + (current[1] - prev[1])**2)
 '''
 Kalman 2D 
 '''
